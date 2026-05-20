@@ -19,7 +19,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "MyChat"
+rootProject.name = "Video Client"
 include(":app")
 include(":data")
 include(":domain")

@@ -1,5 +1,5 @@
 [versions]
-agp = "8.13.0"
+agp = "9.1.0"
 kotlin = "2.2.20"
 coreKtx = "1.17.0"
 junit = "4.13.2"
@@ -13,8 +13,15 @@ material = "1.13.0"
 jetbrainsKotlinJvm = "2.2.20"
 navigationComposeJvmstubs = "2.9.5"
 playServicesAuth = "21.4.0"
+gmsVersion = "4.4.4"
+bomVersion = "34.13.0"
 
 [libraries]
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "bomVersion" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-database = { group = "com.google.firebase", name = "firebase-database" }
+
 androidx-foundation = { group = "androidx.compose.foundation", name = "foundation", version.ref = "composeFoundation" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -40,3 +47,4 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-plugin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }
 jetbrains-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "jetbrainsKotlinJvm" }
+gms = { id = "com.google.gms.google-services", version.ref = "gmsVersion" }

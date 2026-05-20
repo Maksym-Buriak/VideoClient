@@ -2,16 +2,15 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.plugin.compose)
-
-    id("com.google.gms.google-services")
+    alias(libs.plugins.gms)
 }
 
 android {
-    namespace = "com.maks_buriak.mychat"
+    namespace = "com.maks_buriak.videoclient"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.maks_buriak.mychat"
+        applicationId = "com.maks_buriak.videoclient"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -95,13 +94,18 @@ dependencies {
     implementation(project(":data"))
 
     // Firebase BoM (для автоматичного керування версіями)
-    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
-    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
-    implementation("com.google.android.gms:play-services-auth:21.4.0") // Google Sign-In
-    implementation("com.google.firebase:firebase-common")
-    implementation("com.google.firebase:firebase-analytics")
-    implementation("com.google.firebase:firebase-database")
-    implementation("com.google.firebase:firebase-firestore")
+//    implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
+//    implementation("com.google.firebase:firebase-auth-ktx:23.2.1")
+//    implementation("com.google.android.gms:play-services-auth:21.4.0") // Google Sign-In
+//    implementation("com.google.firebase:firebase-common")
+//    implementation("com.google.firebase:firebase-analytics")
+//    implementation("com.google.firebase:firebase-database")
+//    implementation("com.google.firebase:firebase-firestore")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database)
+    implementation(libs.play.services.auth)
 
     // Navigation
     implementation("androidx.navigation:navigation-compose:2.9.3")
