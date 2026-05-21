@@ -7,8 +7,11 @@ import com.maks_buriak.videoclient.domain.usecase.IsPhoneNumberTakenUseCase
 import com.maks_buriak.videoclient.domain.usecase.SaveUserToFirestoreUseCase
 import com.maks_buriak.videoclient.domain.usecase.SendMessageUseCase
 import com.maks_buriak.videoclient.domain.usecase.SendVerificationCodeUseCase
+import com.maks_buriak.videoclient.domain.usecase.SendVideoFrameUseCase
 import com.maks_buriak.videoclient.domain.usecase.SignInWithGoogleUseCase
 import com.maks_buriak.videoclient.domain.usecase.SignOutUseCase
+import com.maks_buriak.videoclient.domain.usecase.StartVideoStreamUseCase
+import com.maks_buriak.videoclient.domain.usecase.StopVideoStreamUseCase
 import com.maks_buriak.videoclient.domain.usecase.UpdateUserNickUseCase
 import com.maks_buriak.videoclient.domain.usecase.UpdateUserPhoneNumberUseCase
 import com.maks_buriak.videoclient.domain.usecase.VerifyCodeUseCase
@@ -62,5 +65,17 @@ val domainModule = module {
 
     factory<IsNickNameTakenUseCase> {
         IsNickNameTakenUseCase(repository = get())
+    }
+
+    factory<StartVideoStreamUseCase> {
+        StartVideoStreamUseCase(repository = get())
+    }
+
+    factory<SendVideoFrameUseCase> {
+        SendVideoFrameUseCase(repository = get())
+    }
+
+    factory<StopVideoStreamUseCase> {
+        StopVideoStreamUseCase(repository = get())
     }
 }

@@ -7,6 +7,7 @@ import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.NickNameViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.PhoneAuthViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.StreamVideoViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.dsl.module
@@ -56,6 +57,14 @@ val appModule = module {
             updateUserNickUseCase = get(),
             isNickNameTakenUseCase = get(),
             userManager = get()
+        )
+    }
+
+    viewModel<StreamVideoViewModel> {
+        StreamVideoViewModel(
+            startVideoStreamUseCase = get(),
+            sendVideoFrameUseCase = get(),
+            stopVideoStreamUseCase = get()
         )
     }
 }

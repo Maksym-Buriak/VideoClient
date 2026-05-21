@@ -8,12 +8,16 @@ import com.maks_buriak.videoclient.data.repository.FirebaseAuthRepositoryImpl
 import com.maks_buriak.videoclient.data.repository.MessageRepositoryImpl
 import com.maks_buriak.videoclient.data.repository.PhoneAuthRepositoryImpl
 import com.maks_buriak.videoclient.data.repository.UserRepositoryImpl
+import com.maks_buriak.videoclient.data.repository.VideoStreamRepositoryImpl
 import com.maks_buriak.videoclient.data.storage.firebase.FirebaseMessageStorage
 import com.maks_buriak.videoclient.domain.repository.FirebaseAuthRepository
 import com.maks_buriak.videoclient.domain.repository.MessageRepository
 import com.maks_buriak.videoclient.domain.repository.PhoneAuthRepository
 import com.maks_buriak.videoclient.domain.repository.UserRepository
+import com.maks_buriak.videoclient.domain.repository.VideoStreamRepository
+import okhttp3.OkHttpClient
 import org.koin.dsl.module
+import java.util.concurrent.TimeUnit
 
 val dataModule = module {
 
@@ -40,4 +44,8 @@ val dataModule = module {
             firebaseAuth = get()
         )
     }
+
+    // VideoStreamRepository
+    single { OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build() }
+    single<VideoStreamRepository> { VideoStreamRepositoryImpl(get()) }
 }
