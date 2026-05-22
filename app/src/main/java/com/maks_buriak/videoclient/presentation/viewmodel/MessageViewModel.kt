@@ -14,7 +14,6 @@ import kotlinx.coroutines.launch
 import java.util.UUID
 
 class MessageViewModel(
-    private val sendMessageUseCase: SendMessageUseCase,
     private val userManager: UserManager
 ) : ViewModel() {
 
@@ -23,44 +22,6 @@ class MessageViewModel(
     private val _uiMessage = MutableStateFlow<String?>(null)
     val uiMessage: StateFlow<String?> get() = _uiMessage
 
-
-    fun sendMessage(messageText: String){
-        Log.d("MessageViewModel", "sendMessage called with message=$messageText")
-
-        //val user = FirebaseAuth.getInstance().currentUser
-        val firebaseUser = FirebaseAuth.getInstance().currentUser
-        if (firebaseUser == null) {
-            Log.e("MessageViewModel", "No FirebaseUser available")
-            return
-        }
-
-        val message = Message (
-            id = UUID.randomUUID().toString(),
-            //id = "1",
-            text = messageText
-        )
-        firebaseUser.getIdToken(true).addOnCompleteListener { task ->
-
-            if (task.isSuccessful) {
-                // токен валідний — відправляємо повідомлення
-                viewModelScope.launch {
-                    try {
-                        sendMessageUseCase(message)
-                        Log.d("MessageViewModel", "Message sent successfully.")
-                    } catch (e: Exception) {
-                        Log.e("MessageViewModel", "Error sending message", e)
-                    }
-                }
-            } else {
-                // токен відкликано -> вихід
-                FirebaseAuth.getInstance().signOut()
-                viewModelScope.launch {
-                    userManager.refreshUser()
-                }
-            }
-
-        }
-    }
 
     fun signOut() {
         userManager.logout()

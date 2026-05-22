@@ -17,7 +17,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -25,16 +24,14 @@ import androidx.core.content.ContextCompat
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
+import com.maks_buriak.videoclient.presentation.camera.FrameAnalyzer
 import com.maks_buriak.videoclient.presentation.viewmodel.StreamVideoViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
-import com.maks_buriak.videoclient.presentation.camera.FrameAnalyzer
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraStreamScreen(viewModel: StreamVideoViewModel = koinViewModel()) {
-    val context = LocalContext.current
-    val lifecycleOwner = LocalLifecycleOwner.current
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     LaunchedEffect(Unit) {
@@ -52,7 +49,6 @@ fun CameraStreamScreen(viewModel: StreamVideoViewModel = koinViewModel()) {
 
 @Composable
 fun CameraPreviewContent(viewModel: StreamVideoViewModel) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val isStreaming by viewModel.isStreaming.collectAsState()
 
@@ -97,11 +93,25 @@ fun CameraPreviewContent(viewModel: StreamVideoViewModel) {
             modifier = Modifier.fillMaxSize()
         )
 
+        if (isStreaming) {
+            Text(
+                text = "Трансляція активна",
+                color = androidx.compose.ui.graphics.Color.Green,
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .padding(top = 16.dp)
+            )
+        }
+
+        // Start/Stop
         Button(
-            onClick = { viewModel.toggleStream("ws://192.168.1.100:8765") },
+            onClick = { viewModel.toggleStream() },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .padding(32.dp)
+                .padding(32.dp),
+            colors = androidx.compose.material3.ButtonDefaults.buttonColors(
+                containerColor = if (isStreaming) androidx.compose.ui.graphics.Color.Red else androidx.compose.ui.graphics.Color(0xFF4CAF50)
+            )
         ) {
             Text(if (isStreaming) "Зупинити трансляцію" else "Почати трансляцію")
         }

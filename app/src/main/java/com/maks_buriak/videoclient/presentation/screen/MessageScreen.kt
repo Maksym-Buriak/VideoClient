@@ -42,12 +42,17 @@ import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageScreen(messageViewModel: MessageViewModel, onAddPhone: () -> Unit, onAddNick: () -> Unit, onSignOut: () -> Unit) {
+fun MessageScreen(
+    messageViewModel: MessageViewModel,
+    onAddPhone: () -> Unit,
+    onAddNick: () -> Unit,
+    onSignOut: () -> Unit,
+    onOpenStream: () -> Unit
+) {
     // UI тут, можна звертатись до viewModel
 
     val context = LocalContext.current
 
-    var messageText by rememberSaveable { mutableStateOf("") }
     var menuExpandet by rememberSaveable { mutableStateOf(false) }
 
     val uiMessage by messageViewModel.uiMessage.collectAsState()
@@ -187,23 +192,11 @@ fun MessageScreen(messageViewModel: MessageViewModel, onAddPhone: () -> Unit, on
                     .padding(paddingValues)
                     .padding(16.dp)
             ) {
-                TextField(
-                    value = messageText,
-                    onValueChange = {messageText = it},
-                    placeholder = { Text("Введіть повідомлення") },
-                    modifier = Modifier.fillMaxWidth()
-                )
-
-                Spacer(modifier = Modifier.height(8.dp))
-
                 Button(
-                    modifier = Modifier.padding(top = 10.dp),
-                    onClick = {
-                        messageViewModel.sendMessage(messageText)
-                        messageText = ""
-                    }
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = { onOpenStream() }
                 ) {
-                    Text("Відправити на сервер")
+                    Text("Відкрити трансляцію відео")
                 }
             }
         }

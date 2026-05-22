@@ -13,13 +13,13 @@ import okio.ByteString.Companion.toByteString
 import kotlin.coroutines.resume
 
 class VideoStreamRepositoryImpl(private val okHttpClient: OkHttpClient) : VideoStreamRepository {
-    
+
     private var webSocket: WebSocket? = null
     private var isConnected = false
 
     override suspend fun startStream(serverUrl: String): Result<Unit> = suspendCancellableCoroutine { continuation ->
         val request = Request.Builder().url(serverUrl).build()
-        
+
         webSocket = okHttpClient.newWebSocket(request, object : WebSocketListener() {
             override fun onOpen(webSocket: WebSocket, response: Response) {
                 isConnected = true

@@ -15,16 +15,18 @@ class StreamVideoViewModel(
     private val stopVideoStreamUseCase: StopVideoStreamUseCase
 ) : ViewModel() {
 
+    private val DEFAULT_SERVER_URL = "ws://192.168.0.103:5000"
+
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming: StateFlow<Boolean> get() = _isStreaming
 
-    fun toggleStream(serverUrl: String) {
+    fun toggleStream() {
         viewModelScope.launch {
             if (_isStreaming.value) {
                 stopVideoStreamUseCase()
                 _isStreaming.value = false
             } else {
-                val result = startVideoStreamUseCase(serverUrl)
+                val result = startVideoStreamUseCase(DEFAULT_SERVER_URL)
                 if (result.isSuccess) {
                     _isStreaming.value = true
                 }

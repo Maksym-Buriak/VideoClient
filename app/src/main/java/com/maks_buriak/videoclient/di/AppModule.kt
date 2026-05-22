@@ -26,7 +26,6 @@ val appModule = module {
 
     viewModel<MessageViewModel> {
         MessageViewModel(
-            sendMessageUseCase = get(),
             userManager = get()
         )
     }

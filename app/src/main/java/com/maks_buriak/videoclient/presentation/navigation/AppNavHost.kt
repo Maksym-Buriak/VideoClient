@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
 import com.maks_buriak.videoclient.presentation.screen.AuthScreen
+import com.maks_buriak.videoclient.presentation.screen.CameraStreamScreen
 import com.maks_buriak.videoclient.presentation.screen.MessageScreen
 import com.maks_buriak.videoclient.presentation.screen.NickNameScreen
 import com.maks_buriak.videoclient.presentation.screen.PhoneAuthScreen
@@ -22,6 +23,7 @@ sealed class Screen(val route: String) {
     object PhoneAuth : Screen("phone_auth")
     object Messages : Screen("messages")
     object NickName : Screen("nick_name")
+    object CameraStream : Screen("camera_stream")
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -86,6 +88,12 @@ fun AppNavHost(navController: NavHostController) {
                 },
                 onSignOut = {
                     messageViewModel.signOut() // userManager.logout()
+                    navController.navigate(Screen.Auth.route) { // Force redirect to the login screen
+                        popUpTo(0) { inclusive = true } // Clearing all navigation history
+                    }
+                },
+                onOpenStream = {
+                    navController.navigate(Screen.CameraStream.route)
                 }
             )
         }
@@ -99,6 +107,10 @@ fun AppNavHost(navController: NavHostController) {
                     navController.popBackStack() // повертаємось у Messages
                 }
             )
+        }
+
+        composable(Screen.CameraStream.route) {
+            CameraStreamScreen()
         }
     }
 }
