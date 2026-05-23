@@ -47,5 +47,5 @@ val dataModule = module {
 
     // VideoStreamRepository
     single { OkHttpClient.Builder().readTimeout(0, TimeUnit.MILLISECONDS).build() }
-    single<VideoStreamRepository> { VideoStreamRepositoryImpl(get()) }
+    single<VideoStreamRepository> { VideoStreamRepositoryImpl() }
 }

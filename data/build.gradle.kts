@@ -47,6 +47,9 @@ dependencies {
     implementation(libs.firebase.firestore)
 
     implementation(libs.okhttp)
+    implementation(libs.socket.io) {
+        exclude(group = "org.json", module = "json")
+    }
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.play.services.auth)

@@ -2,57 +2,70 @@ package com.maks_buriak.videoclient.data.repository
 
 import android.util.Log
 import com.maks_buriak.videoclient.domain.repository.VideoStreamRepository
+import io.socket.client.IO
+import io.socket.client.Socket
 import kotlinx.coroutines.suspendCancellableCoroutine
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.Response
-import okhttp3.WebSocket
-import okhttp3.WebSocketListener
-import okhttp3.internal.connection.Exchange
-import okio.ByteString.Companion.toByteString
+import java.net.URISyntaxException
 import kotlin.coroutines.resume
 
-class VideoStreamRepositoryImpl(private val okHttpClient: OkHttpClient) : VideoStreamRepository {
+class VideoStreamRepositoryImpl : VideoStreamRepository {
 
-    private var webSocket: WebSocket? = null
-    private var isConnected = false
+    private var socket: Socket? = null
 
     override suspend fun startStream(serverUrl: String): Result<Unit> = suspendCancellableCoroutine { continuation ->
-        val request = Request.Builder().url(serverUrl).build()
+        try {
+            // Створюємо сокет з правильними налаштуваннями
+            val options = IO.Options.builder()
+                .setTransports(arrayOf("websocket")) // Використовуємо тільки WebSocket
+                .build()
 
-        webSocket = okHttpClient.newWebSocket(request, object : WebSocketListener() {
-            override fun onOpen(webSocket: WebSocket, response: Response) {
-                isConnected = true
-                Log.d("VideoStreamRepo", "WebSocket Connected to $serverUrl")
-                if (continuation.isActive) continuation.resume(Result.success(Unit))
+            socket = IO.socket(serverUrl, options)
+
+            // Налаштовуємо обробники подій
+            socket?.on(Socket.EVENT_CONNECT) {
+                Log.d("VideoStreamRepo", "Socket.IO Connected to $serverUrl")
+                if (continuation.isActive) {
+                    continuation.resume(Result.success(Unit))
+                }
             }
 
-            override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                isConnected = false
-                Log.e("VideoStreamRepo", "WebSocket Connection Failed", t)
-                if (continuation.isActive) continuation.resume(Result.failure(t))
+            socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
+                val error = args.getOrNull(0) as? Exception ?: Exception("Unknown connection error")
+                Log.e("VideoStreamRepo", "Socket.IO Connection Error", error)
+                if (continuation.isActive) {
+                    continuation.resume(Result.failure(error))
+                }
+                socket?.disconnect()
             }
 
-            override fun onClosing(webSocket: WebSocket, code: Int, reason: String) {
-                isConnected = false
-                Log.d("VideoStreamRepo", "WebSocket Closing: $reason")
+            socket?.on(Socket.EVENT_DISCONNECT) {
+                Log.d("VideoStreamRepo", "Socket.IO Disconnected")
             }
-        })
+
+            // Запускаємо підключення
+            socket?.connect()
+
+        } catch (e: URISyntaxException) {
+            Log.e("VideoStreamRepo", "Invalid Server URL", e)
+            if (continuation.isActive) {
+                continuation.resume(Result.failure(e))
+            }
+        }
     }
 
     override suspend fun sendFrame(frameBytes: ByteArray): Result<Unit> {
-        val socket = webSocket
-        return if (socket != null && isConnected) {
-            val sent = socket.send(frameBytes.toByteString())
-            if (sent) Result.success(Unit) else Result.failure(Exception("Failed to send frame bytes"))
+        val currentSocket = socket
+        return if (currentSocket != null && currentSocket.connected()) {
+            // Надсилаємо дані на подію 'video_frame', як очікує сервер
+            currentSocket.emit("video_frame", frameBytes)
+            Result.success(Unit)
         } else {
-            Result.failure(Exception("WebSocket is not connected"))
+            Result.failure(Exception("Socket.IO is not connected"))
         }
     }
 
     override suspend fun stopStream() {
-        webSocket?.close(1000, "Stream stopped by user")
-        webSocket = null
-        isConnected = false
+        socket?.disconnect()
+        socket = null
     }
 }
