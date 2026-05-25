@@ -31,7 +31,13 @@ import java.util.concurrent.Executors
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun CameraStreamScreen(viewModel: StreamVideoViewModel = koinViewModel()) {
+fun CameraStreamScreen(
+    serverUrl: String,
+    viewModel: StreamVideoViewModel = koinViewModel()
+) {
+    LaunchedEffect(serverUrl) {
+        viewModel.setServerUrl(serverUrl)
+    }
     val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
 
     LaunchedEffect(Unit) {

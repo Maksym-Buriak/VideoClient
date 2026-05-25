@@ -7,6 +7,7 @@ import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.NickNameViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.PhoneAuthViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.StreamVideoViewModel
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
@@ -64,6 +65,12 @@ val appModule = module {
             startVideoStreamUseCase = get(),
             sendVideoFrameUseCase = get(),
             stopVideoStreamUseCase = get()
+        )
+    }
+
+    viewModel<ServerSelectionViewModel> {
+        ServerSelectionViewModel(
+            getAvailableServersUseCase = get()
         )
     }
 }

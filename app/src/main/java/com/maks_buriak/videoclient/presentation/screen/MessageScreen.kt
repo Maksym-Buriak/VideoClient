@@ -39,17 +39,25 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.maks_buriak.videoclient.R
 import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.remember
+import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageScreen(
     messageViewModel: MessageViewModel,
+    serverSelectionViewModel: ServerSelectionViewModel,
     onAddPhone: () -> Unit,
     onAddNick: () -> Unit,
     onSignOut: () -> Unit,
-    onOpenStream: () -> Unit
+    onOpenStream: (String) -> Unit,
 ) {
     // UI тут, можна звертатись до viewModel
+
+    var showServerSheet by rememberSaveable { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
 
     val context = LocalContext.current
 
@@ -187,16 +195,32 @@ fun MessageScreen(
             )
         },
         content = { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .padding(16.dp)
-            ) {
+            Column(modifier = Modifier.padding(paddingValues).padding(16.dp)) {
                 Button(
                     modifier = Modifier.fillMaxWidth(),
-                    onClick = { onOpenStream() }
+                    onClick = {
+                        showServerSheet = true
+                        serverSelectionViewModel.loadServers()
+                    }
                 ) {
                     Text("Відкрити трансляцію відео")
+                }
+            }
+
+            // BottomSheet картка
+            if (showServerSheet) {
+                ModalBottomSheet(
+                    onDismissRequest = { showServerSheet = false },
+                    sheetState = sheetState
+                ) {
+                    // Використовуємо наш ServerSelectionContent
+                    ServerSelectionContent(
+                        viewModel = serverSelectionViewModel,
+                        onServerSelected = { server ->
+                            showServerSheet = false
+                            onOpenStream(server.address)
+                        }
+                    )
                 }
             }
         }

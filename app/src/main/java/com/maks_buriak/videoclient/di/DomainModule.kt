@@ -1,5 +1,6 @@
 package com.maks_buriak.videoclient.di
 
+import com.maks_buriak.videoclient.domain.usecase.GetAvailableServersUseCase
 import com.maks_buriak.videoclient.domain.usecase.GetCurrentUserUseCase
 import com.maks_buriak.videoclient.domain.usecase.GetUserByUidUseCase
 import com.maks_buriak.videoclient.domain.usecase.IsNickNameTakenUseCase
@@ -73,5 +74,9 @@ val domainModule = module {
 
     factory<StopVideoStreamUseCase> {
         StopVideoStreamUseCase(repository = get())
+    }
+
+    factory<GetAvailableServersUseCase> {
+        GetAvailableServersUseCase(repository = get())
     }
 }

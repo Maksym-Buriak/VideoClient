@@ -7,6 +7,8 @@ import androidx.compose.runtime.getValue
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
 import com.maks_buriak.videoclient.presentation.screen.AuthScreen
 import com.maks_buriak.videoclient.presentation.screen.CameraStreamScreen
 import com.maks_buriak.videoclient.presentation.screen.MessageScreen
@@ -16,6 +18,7 @@ import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.NickNameViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.PhoneAuthViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
 import org.koin.androidx.compose.koinViewModel
 
 sealed class Screen(val route: String) {
@@ -23,7 +26,9 @@ sealed class Screen(val route: String) {
     object PhoneAuth : Screen("phone_auth")
     object Messages : Screen("messages")
     object NickName : Screen("nick_name")
-    object CameraStream : Screen("camera_stream")
+    object CameraStream : Screen("camera_stream/{serverUrl}") {
+        fun createRoute(serverUrl: String) = "camera_stream/${serverUrl.replace("/", "_")}"
+    }
 }
 
 @SuppressLint("StateFlowValueCalledInComposition")
@@ -78,8 +83,10 @@ fun AppNavHost(navController: NavHostController) {
 
         composable(Screen.Messages.route) {
             val messageViewModel: MessageViewModel = koinViewModel()
+            val serverSelectionViewModel: ServerSelectionViewModel = koinViewModel()
             MessageScreen(
                 messageViewModel = messageViewModel,
+                serverSelectionViewModel = serverSelectionViewModel,
                 onAddPhone = {
                     navController.navigate(Screen.PhoneAuth.route)
                 },
@@ -87,13 +94,13 @@ fun AppNavHost(navController: NavHostController) {
                     navController.navigate(Screen.NickName.route)
                 },
                 onSignOut = {
-                    messageViewModel.signOut() // userManager.logout()
-                    navController.navigate(Screen.Auth.route) { // Force redirect to the login screen
-                        popUpTo(0) { inclusive = true } // Clearing all navigation history
+                    messageViewModel.signOut()
+                    navController.navigate(Screen.Auth.route) {
+                        popUpTo(0) { inclusive = true }
                     }
                 },
-                onOpenStream = {
-                    navController.navigate(Screen.CameraStream.route)
+                onOpenStream = { serverUrl ->
+                    navController.navigate(Screen.CameraStream.createRoute(serverUrl))
                 }
             )
         }
@@ -109,8 +116,12 @@ fun AppNavHost(navController: NavHostController) {
             )
         }
 
-        composable(Screen.CameraStream.route) {
-            CameraStreamScreen()
+        composable(
+            route = Screen.CameraStream.route,
+            arguments = listOf(navArgument("serverUrl") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val serverUrl = backStackEntry.arguments?.getString("serverUrl")?.replace("_", "/") ?: ""
+            CameraStreamScreen(serverUrl = serverUrl)
         }
     }
 }
