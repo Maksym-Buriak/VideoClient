@@ -19,13 +19,13 @@ class ServerSelectionViewModel(
     fun loadServers() {
         viewModelScope.launch {
             _uiState.value = ServerUiState.Loading
-            getAvailableServersUseCase()
-                .onSuccess { servers ->
+            getAvailableServersUseCase().collect { result ->
+                result.onSuccess { servers ->
                     _uiState.value = ServerUiState.Success(servers)
-                }
-                .onFailure { error ->
+                }.onFailure { error ->
                     _uiState.value = ServerUiState.Error(error.message ?: "Unknown error")
                 }
+            }
         }
     }
 }

@@ -21,9 +21,11 @@ cameraCore = "1.6.1"
 camerax = "1.4.1"
 accompanistPermissions = "0.36.0"
 socketIoClient = "2.1.0"
+kotlinxCoroutines = "1.11.0"
 
 [libraries]
 socket-io = { group = "io.socket", name = "socket.io-client", version.ref = "socketIoClient" }
+kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlinxCoroutines" }
 
 # CameraX
 androidx-camera-core = { group = "androidx.camera", name = "camera-core", version.ref = "camerax" }

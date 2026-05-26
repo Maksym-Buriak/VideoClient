@@ -1,7 +1,8 @@
 package com.maks_buriak.videoclient.domain.repository
 
 import com.maks_buriak.videoclient.domain.models.VideoServer
+import kotlinx.coroutines.flow.Flow
 
 interface ServerRepository {
-    suspend fun getAvailableServers(): Result<List<VideoServer>>
+    fun getServerFlow(): Flow<Result<List<VideoServer>>>
 }
