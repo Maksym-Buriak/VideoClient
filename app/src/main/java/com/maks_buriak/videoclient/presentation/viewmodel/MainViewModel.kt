@@ -1,19 +1,12 @@
 package com.maks_buriak.videoclient.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
-import com.maks_buriak.videoclient.domain.models.Message
 import com.maks_buriak.videoclient.domain.models.User
-import com.maks_buriak.videoclient.domain.usecase.SendMessageUseCase
 import com.maks_buriak.videoclient.presentation.UserManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import java.util.UUID
 
-class MessageViewModel(
+class MainViewModel(
     private val userManager: UserManager
 ) : ViewModel() {
 

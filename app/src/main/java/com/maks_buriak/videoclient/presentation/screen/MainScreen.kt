@@ -21,7 +21,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,16 +37,15 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.maks_buriak.videoclient.R
-import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.MainViewModel
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.rememberModalBottomSheetState
-import androidx.compose.runtime.remember
 import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MessageScreen(
-    messageViewModel: MessageViewModel,
+    mainViewModel: MainViewModel,
     serverSelectionViewModel: ServerSelectionViewModel,
     onAddPhone: () -> Unit,
     onAddNick: () -> Unit,
@@ -63,19 +61,19 @@ fun MessageScreen(
 
     var menuExpandet by rememberSaveable { mutableStateOf(false) }
 
-    val uiMessage by messageViewModel.uiMessage.collectAsState()
+    val uiMessage by mainViewModel.uiMessage.collectAsState()
 
-    val currentUser by messageViewModel.currentUser.collectAsState()
+    val currentUser by mainViewModel.currentUser.collectAsState()
 
     val phoneAction = if (currentUser?.phoneNumber.isNullOrEmpty())
-        MessageViewModel.PhoneAction.ADD
+        MainViewModel.PhoneAction.ADD
     else
-        messageViewModel.getPhoneAction()
+        mainViewModel.getPhoneAction()
 
     uiMessage?.let { msg ->
         LaunchedEffect(msg) {
             android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
-            messageViewModel.clearUiMessage()
+            mainViewModel.clearUiMessage()
         }
     }
 
@@ -144,7 +142,7 @@ fun MessageScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    if (phoneAction == MessageViewModel.PhoneAction.ADD)
+                                    if (phoneAction == MainViewModel.PhoneAction.ADD)
                                         "Додати номер телефону"
                                     else
                                         "Змінити номер телефону"
@@ -152,7 +150,7 @@ fun MessageScreen(
                             },
                             onClick = {
                                 menuExpandet = false
-                                messageViewModel.checkPhoneVerification {
+                                mainViewModel.checkPhoneVerification {
                                     onAddPhone()
                                 }
                             }
@@ -163,7 +161,7 @@ fun MessageScreen(
                         DropdownMenuItem(
                             text = {
                                 Text(
-                                    if (messageViewModel.getNickAction() == MessageViewModel.NickAction.ADD)
+                                    if (mainViewModel.getNickAction() == MainViewModel.NickAction.ADD)
                                         "Додати нік"
                                     else
                                         "Змінити нік"
@@ -171,7 +169,7 @@ fun MessageScreen(
                             },
                             onClick = {
                                 menuExpandet = false
-                                messageViewModel.checkNickChange {
+                                mainViewModel.checkNickChange {
                                     onAddNick()
                                 }
                             }
@@ -185,7 +183,7 @@ fun MessageScreen(
                             text = { Text("Вийти з акаунту") },
                             onClick = {
                                 menuExpandet = false
-                                messageViewModel.signOut()
+                                mainViewModel.signOut()
 
                                 onSignOut()
                             }
@@ -203,7 +201,7 @@ fun MessageScreen(
                         serverSelectionViewModel.loadServers()
                     }
                 ) {
-                    Text("Відкрити трансляцію відео")
+                    Text("Трансляція відео")
                 }
             }
 

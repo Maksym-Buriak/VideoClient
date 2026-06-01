@@ -15,7 +15,7 @@ import com.maks_buriak.videoclient.presentation.screen.MessageScreen
 import com.maks_buriak.videoclient.presentation.screen.NickNameScreen
 import com.maks_buriak.videoclient.presentation.screen.PhoneAuthScreen
 import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
-import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.MainViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.NickNameViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.PhoneAuthViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
@@ -82,10 +82,10 @@ fun AppNavHost(navController: NavHostController) {
         }
 
         composable(Screen.Messages.route) {
-            val messageViewModel: MessageViewModel = koinViewModel()
+            val mainViewModel: MainViewModel = koinViewModel()
             val serverSelectionViewModel: ServerSelectionViewModel = koinViewModel()
             MessageScreen(
-                messageViewModel = messageViewModel,
+                mainViewModel = mainViewModel,
                 serverSelectionViewModel = serverSelectionViewModel,
                 onAddPhone = {
                     navController.navigate(Screen.PhoneAuth.route)
@@ -94,7 +94,7 @@ fun AppNavHost(navController: NavHostController) {
                     navController.navigate(Screen.NickName.route)
                 },
                 onSignOut = {
-                    messageViewModel.signOut()
+                    mainViewModel.signOut()
                     navController.navigate(Screen.Auth.route) {
                         popUpTo(0) { inclusive = true }
                     }

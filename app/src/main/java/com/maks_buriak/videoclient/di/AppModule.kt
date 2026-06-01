@@ -4,7 +4,7 @@ import com.maks_buriak.videoclient.R
 import com.maks_buriak.videoclient.data.authentication.google.GoogleSignInHelper
 import com.maks_buriak.videoclient.presentation.UserManager
 import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
-import com.maks_buriak.videoclient.presentation.viewmodel.MessageViewModel
+import com.maks_buriak.videoclient.presentation.viewmodel.MainViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.NickNameViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.PhoneAuthViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewModel
@@ -25,8 +25,8 @@ val appModule = module {
     // UserManager singleton for global user state
     single { UserManager(repository = get(), getUserByUidUseCase = get()) }
 
-    viewModel<MessageViewModel> {
-        MessageViewModel(
+    viewModel<MainViewModel> {
+        MainViewModel(
             userManager = get()
         )
     }
