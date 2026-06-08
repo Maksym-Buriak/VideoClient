@@ -30,10 +30,17 @@ class VideoStreamRepositoryImpl : VideoStreamRepository {
             }
 
             socket?.on(Socket.EVENT_CONNECT_ERROR) { args ->
-                val error = args.getOrNull(0) as? Exception ?: Exception("Unknown connection error")
+                val error = args.getOrNull(0) as? Exception
                 Log.e("VideoStreamRepo", "Socket.IO Connection Error", error)
+                
+                val message = if (error is io.socket.engineio.client.EngineIOException) {
+                    "Час очікування вичерпано. Перевірте підключення до Tailscale VPN"
+                } else {
+                    "Помилка з'єднання з сервером."
+                }
+                
                 if (continuation.isActive) {
-                    continuation.resume(Result.failure(error))
+                    continuation.resume(Result.failure(Exception(message)))
                 }
                 socket?.disconnect()
             }

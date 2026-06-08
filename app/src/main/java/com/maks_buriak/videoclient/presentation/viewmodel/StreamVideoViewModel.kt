@@ -20,6 +20,9 @@ class StreamVideoViewModel(
     private val _isStreaming = MutableStateFlow(false)
     val isStreaming: StateFlow<Boolean> get() = _isStreaming
 
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
+
     fun setServerUrl(url: String) {
         currentServerUrl = url
     }
@@ -35,9 +38,15 @@ class StreamVideoViewModel(
                 val result = startVideoStreamUseCase(url)
                 if (result.isSuccess) {
                     _isStreaming.value = true
+                } else {
+                    _errorMessage.value = result.exceptionOrNull()?.message ?: "Помилка підключення"
                 }
             }
         }
+    }
+
+    fun clearErrorMessage() {
+        _errorMessage.value = null
     }
 
     fun sendFrame(bytes: ByteArray) {
@@ -49,6 +58,6 @@ class StreamVideoViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        viewModelScope.launch { stopVideoStreamUseCase }
+        viewModelScope.launch { stopVideoStreamUseCase() }
     }
 }
