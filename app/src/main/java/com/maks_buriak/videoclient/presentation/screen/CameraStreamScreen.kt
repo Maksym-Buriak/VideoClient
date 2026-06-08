@@ -10,11 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -25,16 +30,27 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.maks_buriak.videoclient.presentation.camera.FrameAnalyzer
+import com.maks_buriak.videoclient.presentation.viewmodel.MainViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.StreamVideoViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
 
-@OptIn(ExperimentalPermissionsApi::class)
+@OptIn(ExperimentalPermissionsApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun CameraStreamScreen(
     serverUrl: String,
     viewModel: StreamVideoViewModel = koinViewModel()
 ) {
+    val snackbarHostState = remember { SnackbarHostState() }
+    val errorMessage by viewModel.errorMessage.collectAsState()
+
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            snackbarHostState.showSnackbar(it)
+            viewModel.clearErrorMessage()
+        }
+    }
+
     LaunchedEffect(serverUrl) {
         viewModel.setServerUrl(serverUrl)
     }
@@ -44,11 +60,17 @@ fun CameraStreamScreen(
         cameraPermissionState.launchPermissionRequest()
     }
 
-    if (cameraPermissionState.status.isGranted) {
-        CameraPreviewContent(viewModel)
-    } else {
-        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Потрібен дозвіл до камери")
+    Scaffold(
+        snackbarHost = { SnackbarHost(hostState = snackbarHostState) }
+    ) { paddingValues ->
+        if (cameraPermissionState.status.isGranted) {
+            Box(modifier = Modifier.padding(paddingValues)) {
+                CameraPreviewContent(viewModel)
+            }
+        } else {
+            Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.Center) {
+                Text("Потрібен дозвіл до камери")
+            }
         }
     }
 }
