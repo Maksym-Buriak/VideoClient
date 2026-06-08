@@ -28,6 +28,19 @@ class ServerSelectionViewModel(
             }
         }
     }
+
+    fun selectServer(server: VideoServer, onNavigate: (VideoServer) -> Unit) {
+        if (server.status == "online") {
+            onNavigate(server)
+        } else {
+            viewModelScope.launch {
+                val previousState = _uiState.value
+                _uiState.value = ServerUiState.Error("Сервер офлайн")
+                kotlinx.coroutines.delay(2000)
+                _uiState.value = previousState
+            }
+        }
+    }
 }
 
 sealed class ServerUiState {
