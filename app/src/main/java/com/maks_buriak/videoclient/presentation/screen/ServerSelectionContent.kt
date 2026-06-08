@@ -48,7 +48,7 @@ fun ServerSelectionContent(
             is ServerUiState.Success -> {
                 LazyColumn {
                     items(state.servers) { server ->
-                        ServerItem(server, onClick = { onServerSelected(server) })
+                        ServerItem(server, onClick = { viewModel.selectServer(server, onServerSelected) })
                         HorizontalDivider()
                     }
                 }

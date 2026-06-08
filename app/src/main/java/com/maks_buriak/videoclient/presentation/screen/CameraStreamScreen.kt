@@ -30,7 +30,6 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
 import com.maks_buriak.videoclient.presentation.camera.FrameAnalyzer
-import com.maks_buriak.videoclient.presentation.viewmodel.MainViewModel
 import com.maks_buriak.videoclient.presentation.viewmodel.StreamVideoViewModel
 import org.koin.androidx.compose.koinViewModel
 import java.util.concurrent.Executors
