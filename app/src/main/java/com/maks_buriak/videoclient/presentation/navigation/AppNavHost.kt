@@ -11,7 +11,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.maks_buriak.videoclient.presentation.screen.AuthScreen
 import com.maks_buriak.videoclient.presentation.screen.CameraStreamScreen
-import com.maks_buriak.videoclient.presentation.screen.MessageScreen
+import com.maks_buriak.videoclient.presentation.screen.MainScreen
 import com.maks_buriak.videoclient.presentation.screen.NickNameScreen
 import com.maks_buriak.videoclient.presentation.screen.PhoneAuthScreen
 import com.maks_buriak.videoclient.presentation.viewmodel.AuthViewModel
@@ -84,7 +84,7 @@ fun AppNavHost(navController: NavHostController) {
         composable(Screen.Messages.route) {
             val mainViewModel: MainViewModel = koinViewModel()
             val serverSelectionViewModel: ServerSelectionViewModel = koinViewModel()
-            MessageScreen(
+            MainScreen(
                 mainViewModel = mainViewModel,
                 serverSelectionViewModel = serverSelectionViewModel,
                 onAddPhone = {

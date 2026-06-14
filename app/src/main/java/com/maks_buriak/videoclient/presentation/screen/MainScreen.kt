@@ -44,7 +44,7 @@ import com.maks_buriak.videoclient.presentation.viewmodel.ServerSelectionViewMod
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MessageScreen(
+fun MainScreen(
     mainViewModel: MainViewModel,
     serverSelectionViewModel: ServerSelectionViewModel,
     onAddPhone: () -> Unit,
